@@ -18,10 +18,9 @@ export default async function AppLayout({
   }
   return (
     <>
-      <div className="container flex flex-col justify-center max-h-screen items-center space-y-4 p-4">
+      <div className="container flex flex-col justify-center min-h-screen items-center space-y-4 p-4">
         <Header />
-        <div className="justify-end flex w-full space-x-4"></div>
-        {children}
+        <div className="justify-end flex w-full space-x-4">{children}</div>
       </div>
     </>
   )
