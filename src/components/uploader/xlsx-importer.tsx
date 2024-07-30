@@ -1,6 +1,5 @@
 'use client'
 import { useUploadFile } from '@/hooks/use-upload-file'
-import { Button } from './ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,15 +7,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog'
+} from '../ui/dialog'
 import { FileUploader } from './file-uploader'
+import { CircleFadingPlus } from 'lucide-react'
+import { Button } from '../ui/button'
 export function XlsxImporter() {
   const { onUpload, isUploading } = useUploadFile('xlsxUploader')
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={'outline'}>Import XLSX</Button>
+        <Button variant={'link'} className="p-2">
+          <CircleFadingPlus className="mr-2 size-4" />
+          Import XLSX
+        </Button>
       </DialogTrigger>
       <DialogContent className="p-8 sm:max-w-xl">
         <DialogHeader>

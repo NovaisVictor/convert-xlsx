@@ -6,7 +6,7 @@ import type { UploadFilesOptions } from 'uploadthing/types'
 import { getErrorMessage } from '@/utils/handle-error'
 import { uploadFiles } from '@/utils/uploadthing'
 import { type OurFileRouter } from '@/app/api/uploadthing/core'
-import { SetCookieUrlAction } from '@/components/actions'
+import { downloadAndSetFile } from '@/components/uploader/actions'
 
 interface UseUploadFileProps
   extends Pick<
@@ -41,7 +41,7 @@ export function useUploadFile(
         },
       })
       const fileUrl = res[0].url // Obter a URL do primeiro arquivo
-      SetCookieUrlAction(fileUrl)
+      await downloadAndSetFile(fileUrl)
       setUploadedFiles((prev) => (prev ? [...prev, ...res] : res))
     } catch (err) {
       toast.error(getErrorMessage(err))
