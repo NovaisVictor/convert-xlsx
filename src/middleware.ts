@@ -3,11 +3,11 @@ import { type NextRequest, NextResponse } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const response = NextResponse.next()
-  if (pathname.startsWith('/table')) {
-    const [, , id] = pathname.split('/')
-    response.cookies.set('table', id)
+  if (pathname.startsWith('/co')) {
+    const [, , slug] = pathname.split('/')
+    response.cookies.set('co', slug)
   } else {
-    response.cookies.delete('table')
+    response.cookies.delete('co')
   }
   return response
 }

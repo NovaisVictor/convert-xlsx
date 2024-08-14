@@ -12,11 +12,10 @@ import {
 import { XlsxImporter } from './uploader/xlsx-importer'
 import { getUserTables } from '@/http/get-user-tables'
 import Link from 'next/link'
-import { getCurrentTableId } from '@/auth/auth'
 
 export async function TableSwitcher() {
   const { tables } = await getUserTables()
-  const currentTableId = getCurrentTableId()
+  const currentTableId = 'getCurrentTableId()'
 
   const currentTable = tables.find((table) => table.id === currentTableId)
 
@@ -33,7 +32,9 @@ export async function TableSwitcher() {
         ) : (
           <span className="text-muted-foreground">Selecione uma tabela</span>
         )}
-        <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
+        <div>
+          <ChevronsUpDown className="size-4 text-muted-foreground" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="center"

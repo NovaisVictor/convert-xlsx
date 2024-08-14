@@ -4,7 +4,6 @@ interface getUserTablesResponse {
   tables: {
     id: string
     name: string | null
-    fileUrl: string
     fileJson: string
     userId: string
   }[]

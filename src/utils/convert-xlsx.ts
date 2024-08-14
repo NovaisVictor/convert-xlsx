@@ -1,4 +1,4 @@
-import excelToJson from 'convert-excel-to-json'
+import * as XLSX from 'xlsx'
 
 export type Sheet3594 = {
   ALIQ_ICMS: string
@@ -9,40 +9,44 @@ export type Sheet3594 = {
   FUNDAMENTO: string
 }
 
-export function convertXlsx(file: string) {
-  const result = excelToJson({
-    source: file,
-    sheets: [
-      {
-        name: '3594',
-        header: {
-          rows: 12,
-        },
-        columnToKey: {
-          I: '{{I12}}',
-          J: '{{J12}}',
-          M: '{{M12}}',
-          O: '{{O12}}',
-          P: '{{P12}}',
-          N: '{{N12}}',
-        },
-      },
-    ],
-  })
+export function convertXlsx(buffer: Buffer): Sheet3594[] {
+  // Lê o arquivo XLSX a partir do Buffer
+  const workbook = XLSX.read(buffer, { type: 'buffer' })
+  const sheetName = '3594' // Nome da aba que você deseja ler
+  const worksheet = workbook.Sheets[sheetName]
 
-  const sheet = result['3594']
+  if (!worksheet) {
+    throw new Error(`A aba '${sheetName}' não foi encontrada.`)
+  }
 
+  const jsonData: Sheet3594[] = XLSX.utils
+    .sheet_to_json<Sheet3594>(worksheet, {
+      header: 1, // Para obter um array de arrays
+      range: 12, // Começa a leitura após as 12 primeiras linhas
+    })
+    .slice(1) // Remove o cabeçalho
+
+  // Mapeia os dados para o tipo Sheet3594
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mappedData: Sheet3594[] = jsonData.map((row: any) => ({
+    ALIQ_ICMS: row[8] as string,
+    ALIQ_ICMS_PADRAO: row[9] as string,
+    COD_NCM: row[12] as string,
+    COD_ITEM: row[13] as string,
+    OBS: row[14] as string,
+    FUNDAMENTO: row[15] as string,
+  }))
+
+  // Filtra duplicatas
+  const seenItems = new Set<string>()
   const filterArr: Sheet3594[] = []
 
-  for (let index = 0; index < sheet.length; index++) {
-    const row = sheet[index]
-    if (!filterArr.some((item) => item.COD_ITEM === row.COD_ITEM)) {
+  for (const row of mappedData) {
+    if (!seenItems.has(row.COD_ITEM)) {
+      seenItems.add(row.COD_ITEM)
       filterArr.push(row)
     }
   }
 
-  // console.log(filterArr)
   return filterArr
-  // console.log(sheet.length)
 }

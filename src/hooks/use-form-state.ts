@@ -36,7 +36,7 @@ export function useFormState(
       if (state.success === false && onError) {
         if (!state.message) {
           await onError(
-            'Ocorreu um problea, por favor tente nomevamente em alguns instantes',
+            'Ocorreu um problema, por favor tente nomevamente em alguns instantes',
           )
         } else {
           await onError(state.message)

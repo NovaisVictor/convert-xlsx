@@ -33,13 +33,10 @@ export async function signInWithEmailAndPassword(data: FormData) {
     })
   } catch (err) {
     if (err instanceof HTTPError) {
-      return {
-        success: false,
-        message: 'Invalid credentials',
-        errors: null,
-      }
+      const { message } = await err.response.json()
+
+      return { success: false, message, errors: null }
     }
-    console.error(err)
     return {
       success: false,
       message: 'Unexpected error, try again in a few minutes.',

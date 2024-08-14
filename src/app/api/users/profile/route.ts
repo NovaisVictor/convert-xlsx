@@ -1,13 +1,13 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse, type NextRequest } from 'next/server'
-import { verifyJwt } from '@/auth/auth'
+import { userFromJwt } from '@/app/auth/auth'
 
 export async function GET(request: NextRequest) {
-  const { userId } = verifyJwt(request)
+  const { user } = await userFromJwt(request)
 
-  const user = await prisma.user.findFirst({
+  const userFiltered = await prisma.user.findFirst({
     where: {
-      id: userId?.toString(),
+      id: user.id,
     },
     select: {
       id: true,
@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
     },
   })
 
-  if (!user) {
+  if (!userFiltered) {
     return NextResponse.json({ message: 'User not exists' }, { status: 400 })
   }
-  return NextResponse.json({ user }, { status: 200 })
+  return NextResponse.json({ user: userFiltered }, { status: 200 })
 }

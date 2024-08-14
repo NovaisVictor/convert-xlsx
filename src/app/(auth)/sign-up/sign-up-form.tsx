@@ -28,15 +28,6 @@ export function SignUpForm() {
   return (
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* {success === false && message && (
-          <Alert variant={'destructive'}>
-            <AlertTriangle className="size-4" />
-            <AlertTitle>Sign in failed!</AlertTitle>
-            <AlertDescription>
-              <p> {message} </p>
-            </AlertDescription>
-          </Alert>
-        )} */}
         <div className="space-y-1">
           <Label htmlFor="name">Name</Label>
           <Input name="name" id="name" />

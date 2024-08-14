@@ -22,13 +22,19 @@ export async function POST(request: NextRequest) {
   })
 
   if (!user) {
-    throw new Error('Invalid credentials.')
+    return NextResponse.json(
+      { message: 'Credenciais invalidas' },
+      { status: 400 },
+    )
   }
 
   const isPasswordValid = compare(password, user.passwordHash)
 
   if (!isPasswordValid) {
-    throw new Error('Invalid credentials.')
+    return NextResponse.json(
+      { message: 'Credenciais invalidas' },
+      { status: 400 },
+    )
   }
 
   const token = sign({ sub: user.id }, env.JWT_SECRET!, {
