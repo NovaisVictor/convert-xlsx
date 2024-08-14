@@ -31,6 +31,7 @@ export async function uploadTableAction(data: FormData) {
   const tableWithSameFile = await prisma.tables.findMany({
     where: {
       fileJson: file,
+      companyId: company.id,
     },
   })
 

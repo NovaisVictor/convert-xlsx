@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -19,8 +19,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   isAdmin      Boolean  @default(false)
-  Tables       Tables[]
-  Member       Member[]
+  owns_tables  Tables[]
+  member_on    Member[]
 }
 
 model Tables {
@@ -46,8 +46,8 @@ model Company {
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  member_on Member[]
-  Tables    Tables[]
+  members   Member[]
+  tables    Tables[]
 }
 
 model Member {

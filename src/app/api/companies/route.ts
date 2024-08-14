@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       avatarUrl: true,
     },
     where: {
-      member_on: {
+      members: {
         some: {
           userId: user.id,
         },
@@ -48,12 +48,12 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const { name, cnpj } = createCompanySchema.parse(body)
 
-  if (!user.isAdmin) {
-    return NextResponse.json(
-      { message: 'Você não pode cadastrar novas empresas' },
-      { status: 401 },
-    )
-  }
+  // if (!user.isAdmin) {
+  //   return NextResponse.json(
+  //     { message: 'Você não pode cadastrar novas empresas' },
+  //     { status: 401 },
+  //   )
+  // }
 
   const slug = createSlug(name)
 
@@ -62,6 +62,11 @@ export async function POST(request: NextRequest) {
       name,
       cnpj,
       slug,
+      members: {
+        create: {
+          userId: user.id,
+        },
+      },
     },
   })
   return NextResponse.json({ status: 200 })
