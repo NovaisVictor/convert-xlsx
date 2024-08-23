@@ -38,6 +38,12 @@ model Tables {
   ownerId String
 }
 
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MEMBER
+}
+
 model Company {
   id        String   @id @default(uuid())
   name      String
@@ -58,6 +64,8 @@ model Member {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  role Role @default(MEMBER)
 
   @@unique([companyId, userId])
   @@map("member")
