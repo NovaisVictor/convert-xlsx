@@ -4,14 +4,12 @@ import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useFormState } from '@/hooks/use-form-state'
 
-import {
-  createCompanyAction,
-  updateCompanyAction,
-  type CompanySchema,
-} from './actions'
+import { createCompanyAction } from '@/actions/companies/create-company-action'
+import { updateCompanyAction } from '@/actions/companies/update-company-aciont'
+import { useServerAction } from 'zsa-react'
 import { toast } from 'sonner'
+import type { CompanySchema } from '@/actions/companies/company-schema'
 
 interface CompanyFormProps {
   isUpdating?: boolean
@@ -24,17 +22,18 @@ export function CompanyForm({
 }: CompanyFormProps) {
   const formAction = isUpdating ? updateCompanyAction : createCompanyAction
 
-  const [{ errors }, handleSubmit, isPending] = useFormState(
-    formAction,
-    () => {
-      toast.success('Empresa cadastrada com sucesso.')
+  const { isPending, executeFormAction, error } = useServerAction(formAction, {
+    onSuccess() {
+      toast.success(
+        isUpdating
+          ? 'Empresa atualizada com sucesso'
+          : 'Empresa criada com sucesso',
+      )
     },
-    (errMessage) => {
-      toast.error(errMessage)
-    },
-  )
+  })
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form action={executeFormAction} className="space-y-4">
       <div className="space-y-1">
         <Label htmlFor="name">Nome</Label>
         <Input
@@ -43,9 +42,9 @@ export function CompanyForm({
           id="name"
           defaultValue={initialData?.name}
         />
-        {errors?.name && (
+        {error?.fieldErrors?.name && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.name[0]}
+            {error.fieldErrors.name}
           </p>
         )}
       </div>
@@ -57,9 +56,9 @@ export function CompanyForm({
           id="cpfCnpj"
           defaultValue={initialData?.cpfCnpj}
         />
-        {errors?.cpfCnpj && (
+        {error?.fieldErrors?.cpfCnpj && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.cpfCnpj[0]}
+            {error.fieldErrors.cpfCnpj}
           </p>
         )}
       </div>

@@ -1,8 +1,8 @@
 'use server'
 
-import { getCurrentCo } from '@/app/auth/auth'
-import { getCompany } from '@/http/get-company'
-import { getProfile } from '@/http/get-profile'
+import { getProfileAction } from '@/actions/auth/get-profile-action'
+import { getCompanyAction } from '@/actions/companies/get-company-action'
+
 import { prisma } from '@/lib/prisma'
 
 import { revalidateTag } from 'next/cache'
@@ -22,16 +22,22 @@ export async function uploadTableAction(data: FormData) {
     return { success: false, message: null, errors }
   }
 
-  const currentCo = getCurrentCo()
-  const { company } = await getCompany(currentCo!)
-  const { user } = await getProfile()
+  const [company, err1] = await getCompanyAction()
+  const [profile, err2] = await getProfileAction()
+
+  if (err1) {
+    throw new Error(err1.data)
+  }
+  if (err2) {
+    throw new Error(err2.data)
+  }
 
   const { name, competence, file } = result.data
 
   const tableWithSameFile = await prisma.tables.findMany({
     where: {
       fileJson: file,
-      companyId: company.id,
+      companyId: company.company.id,
     },
   })
 
@@ -47,10 +53,10 @@ export async function uploadTableAction(data: FormData) {
     await prisma.tables.create({
       data: {
         name,
-        companyId: company.id,
+        companyId: company.company.id,
         competence,
         fileJson: file,
-        ownerId: user.id,
+        ownerId: profile.user.id,
       },
     })
     revalidateTag('tables')

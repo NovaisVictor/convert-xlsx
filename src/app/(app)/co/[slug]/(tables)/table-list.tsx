@@ -13,18 +13,22 @@ import {
 } from '@/components/ui/card'
 
 import { getCurrentCo } from '@/app/auth/auth'
-import { getTables } from '@/http/get-tables'
-
+import Link from 'next/link'
+import { getCompaniesTablesAction } from '@/actions/companies/get-companies-tables-action'
 dayjs.extend(relativeTime)
 
 export async function TableList() {
   const currentCo = getCurrentCo()
 
-  const { tables } = await getTables(currentCo!)
+  const [data, err] = await getCompaniesTablesAction()
 
+  if (err) {
+    console.error(err.data)
+    return
+  }
   return (
     <div className="grid grid-cols-3 gap-4">
-      {tables.map((table) => {
+      {data.tables.map((table) => {
         return (
           <Card key={table.id} className="flex flex-col justify-between">
             <CardHeader>
@@ -43,15 +47,16 @@ export async function TableList() {
                 <AvatarFallback />
               </Avatar>
               <span className="truncate text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  {table.ownerId}
+                <span className="font-medium text-foreground mr-2">
+                  {table.owner.name}
                 </span>
                 {dayjs(table.createdAt).fromNow()}
               </span>
-
-              <Button size={'xs'} variant={'outline'} className="ml-auto">
-                View <ArrowRight className="ml-2 size-3" />
-              </Button>
+              <Link href={`/co/${currentCo}/table/${table.id}`}>
+                <Button size={'xs'} variant={'outline'} className="ml-auto">
+                  Visualizar <ArrowRight className="ml-2 size-3" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         )

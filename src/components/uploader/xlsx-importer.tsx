@@ -13,7 +13,6 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
-import { uploadTableAction } from './actions'
 import { toast } from 'sonner'
 import { useFormState } from '@/hooks/use-form-state'
 import { useState } from 'react'
@@ -24,6 +23,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '../ui/input-otp'
+import { uploadTableAction } from '@/actions/tables/upload-table-action'
 
 export function XlsxImporter() {
   const [files, setFiles] = useState<File[]>([])

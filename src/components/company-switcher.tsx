@@ -2,7 +2,6 @@ import { ChevronsUpDown, CircleFadingPlus } from 'lucide-react'
 import Link from 'next/link'
 
 import { getCurrentCo } from '@/app/auth/auth'
-import { getCompanies } from '@/http/get-companies'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
@@ -15,10 +14,15 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { getInitials } from '@/utils/get-initials'
+import { getCompaniesAction } from '@/actions/companies/get-companies-action'
 
 export async function CompanySwitcher() {
   const currentCo = getCurrentCo()
-  const { companies } = await getCompanies()
+  const [data, err] = await getCompaniesAction()
+  if (err) {
+    return
+  }
+  const companies = data.companies
   const currentCompany = companies.find((company) => company.slug === currentCo)
   return (
     <DropdownMenu>

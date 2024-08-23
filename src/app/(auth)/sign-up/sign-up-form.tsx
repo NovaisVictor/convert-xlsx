@@ -7,51 +7,56 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useFormState } from '@/hooks/use-form-state'
 
-import { signUpAction } from './actions'
+import { useServerAction } from 'zsa-react'
 import { toast } from 'sonner'
+import { signUpAction } from '@/actions/auth/sign-up-action'
 
 export function SignUpForm() {
   const router = useRouter()
 
-  const [{ errors }, handleSubmit, isPending] = useFormState(
+  const { isPending, executeFormAction, error } = useServerAction(
     signUpAction,
-    () => {
-      toast.success('Sign-up succefully.')
-      router.push('/sign-in')
-    },
-    (errMessage) => {
-      toast.error(errMessage)
+    {
+      onSuccess() {
+        toast.success('Cadastro realizado com sucesso')
+        router.push('/sign-in')
+      },
+      onError() {
+        toast.error(
+          'Houve um problema ao realizar seu cadastro, tente novamente mais tarde',
+        )
+      },
     },
   )
+
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form action={executeFormAction} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="name">Name</Label>
           <Input name="name" id="name" />
-          {errors?.name && (
+          {error?.fieldErrors?.name && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.name[0]}
+              {error?.fieldErrors?.name}
             </p>
           )}
         </div>
         <div className="space-y-1">
           <Label htmlFor="email">E-mail</Label>
           <Input name="email" type="email" id="email" />
-          {errors?.email && (
+          {error?.fieldErrors?.email && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.email[0]}
+              {error?.fieldErrors?.email}
             </p>
           )}
         </div>
         <div className="space-y-1">
           <Label htmlFor="password">Password</Label>
           <Input name="password" type="password" id="password" />
-          {errors?.password && (
+          {error?.fieldErrors?.password && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.password[0]}
+              {error?.fieldErrors?.password}
             </p>
           )}
         </div>
@@ -62,9 +67,9 @@ export function SignUpForm() {
             type="password"
             id="password_confirmation"
           />
-          {errors?.password_confirmation && (
+          {error?.fieldErrors?.password_confirmation && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.password_confirmation[0]}
+              {error?.fieldErrors?.password_confirmation}
             </p>
           )}
         </div>

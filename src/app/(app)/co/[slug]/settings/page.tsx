@@ -6,17 +6,19 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-import { getCurrentCo } from '@/app/auth/auth'
 import { CompanyForm } from '@/app/(app)/create-company/company-form'
-import { getCompany } from '@/http/get-company'
+import { getCompanyAction } from '@/actions/companies/get-company-action'
 
 export default async function Settings() {
-  const currentCo = getCurrentCo()
+  const [data, err] = await getCompanyAction()
 
-  const { company } = await getCompany(currentCo!)
+  if (err) {
+    console.error(err.data)
+    return
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold">Configurações</h1>
       <div className="space-y-4">
         <Card>
@@ -27,8 +29,8 @@ export default async function Settings() {
           <CardContent>
             <CompanyForm
               initialData={{
-                name: company.name,
-                cpfCnpj: company.cnpj,
+                name: data.company.name,
+                cpfCnpj: data.company.cnpj,
               }}
               isUpdating
             />

@@ -25,12 +25,14 @@
     "@tanstack/react-query": "^5.51.15",
     "@tanstack/react-table": "^8.19.3",
     "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/convert-excel-to-json": "^1.7.4",
     "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^9.0.6",
     "@uploadthing/react": "^6.7.2",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
@@ -55,7 +57,10 @@
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.13.2",
     "xlsx": "^0.18.5",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zsa": "^0.6.0",
+    "zsa-react": "^0.2.2",
+    "zsa-react-query": "^0.2.1"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",

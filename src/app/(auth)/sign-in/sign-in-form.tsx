@@ -1,63 +1,50 @@
 'use client'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useFormState } from '@/hooks/use-form-state'
+import { useServerAction } from 'zsa-react'
 
-import { signInWithEmailAndPassword } from './actions'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { signInAction } from '@/actions/auth/sign-in-action'
 
 export function SignInForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  const [{ errors }, handleSubmit, isPending] = useFormState(
-    signInWithEmailAndPassword,
-    () => {
-      toast.success('Login realizado com sucesso')
-      router.push('/')
-    },
-    (errMessage) => {
-      toast.error(errMessage)
+  const { isPending, executeFormAction, error } = useServerAction(
+    signInAction,
+    {
+      onSuccess() {
+        toast.success('Login realizado com sucesso')
+        router.push('/')
+      },
+      onError() {
+        toast.error('Credencias invalidas')
+      },
     },
   )
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* {success === false && message && (
-          <Alert variant={'destructive'}>
-            <AlertTriangle className="size-4" />
-            <AlertTitle>Sign in failed!</AlertTitle>
-            <AlertDescription>
-              <p> {message} </p>
-            </AlertDescription>
-          </Alert>
-        )} */}
+      <form action={executeFormAction} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="email">E-mail</Label>
-          <Input
-            name="email"
-            type="email"
-            id="email"
-            defaultValue={searchParams.get('email') ?? ''}
-          />
-          {errors?.email && (
+          <Input name="email" type="email" id="email" />
+          {error?.fieldErrors?.email && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.email[0]}
+              {error?.fieldErrors?.email}
             </p>
           )}
         </div>
         <div className="space-y-1">
           <Label htmlFor="password">Password</Label>
           <Input name="password" type="password" id="password" />
-          {errors?.password && (
+          {error?.fieldErrors?.password && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.password[0]}
+              {error?.fieldErrors?.password}
             </p>
           )}
 

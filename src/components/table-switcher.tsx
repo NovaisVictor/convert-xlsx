@@ -10,14 +10,19 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { XlsxImporter } from './uploader/xlsx-importer'
-import { getUserTables } from '@/http/get-user-tables'
+
 import Link from 'next/link'
+import { getCompaniesTablesAction } from '@/actions/companies/get-companies-tables-action'
 
 export async function TableSwitcher() {
-  const { tables } = await getUserTables()
-  const currentTableId = 'getCurrentTableId()'
+  const [data, err] = await getCompaniesTablesAction()
+  if (err) {
+    return
+  }
+  // const currentTableId = 'getCurrentTableId()'
 
-  const currentTable = tables.find((table) => table.id === currentTableId)
+  // const currentTable = tables.find((table) => table.id === currentTableId)
+  const currentTable = data.tables[0]
 
   return (
     <DropdownMenu>
@@ -44,7 +49,7 @@ export async function TableSwitcher() {
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel>Tabelas</DropdownMenuLabel>
-          {tables.map((table) => {
+          {data.tables.map((table) => {
             return (
               <DropdownMenuItem key={table.id} asChild>
                 <Link href={`/table/${table.id}`}>

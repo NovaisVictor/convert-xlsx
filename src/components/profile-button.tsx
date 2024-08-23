@@ -7,11 +7,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { auth } from '@/app/auth/auth'
+
 import { getInitials } from '@/utils/get-initials'
+import { getProfileAction } from '@/actions/auth/get-profile-action'
 
 export async function ProfileButton() {
-  const { user } = await auth()
+  const [data, err] = await getProfileAction()
+
+  if (err) {
+    console.error(err)
+    return
+  }
+
+  const user = data.user
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-3 outline-none">
