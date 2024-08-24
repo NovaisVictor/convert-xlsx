@@ -40,7 +40,7 @@ export function SignInForm() {
           )}
         </div>
         <div className="space-y-1">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Senha</Label>
           <Input name="password" type="password" id="password" />
           {error?.fieldErrors?.password && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
@@ -52,18 +52,18 @@ export function SignInForm() {
             href="/auth/forgot-password"
             className="text-sm font-medium text-foreground hover:underline"
           >
-            Forgot your password?
+            Esqueceu sua senha?
           </Link>
         </div>
         <Button className="w-full" type="submit" disabled={isPending}>
           {isPending ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            'Sign in with e-mail'
+            'Entrar com e-mail'
           )}
         </Button>
         <Button variant={'link'} className="w-full" asChild>
-          <Link href="/sign-up">Create new account</Link>
+          <Link href="/sign-up">Criar uma nova conta</Link>
         </Button>
       </form>
     </div>
