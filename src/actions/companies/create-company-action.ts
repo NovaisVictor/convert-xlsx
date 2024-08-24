@@ -15,14 +15,20 @@ export const createCompanyAction = authProcedure
     const { user } = ctx
     const slug = createSlug(name)
 
+    if (!user.isAdmin) {
+      throw new Error('You not allowed to create one company')
+    }
+
     await prisma.company.create({
       data: {
         name,
         cnpj: cpfCnpj,
         slug,
+        ownerId: user.id,
         members: {
           create: {
             userId: user.id,
+            role: 'SUPER_ADMIN',
           },
         },
       },
