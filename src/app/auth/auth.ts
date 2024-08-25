@@ -1,4 +1,6 @@
+import { getUserMembershipAction } from '@/actions/auth/get-membership-action'
 import { cookies } from 'next/headers'
+import { defineAbilityFor } from '../../../casl'
 
 export function isAuthenticated() {
   return !!cookies().get('token')?.value
@@ -8,26 +10,20 @@ export function getCurrentCo() {
   return cookies().get('co')?.value ?? null
 }
 
-// export async function getUserMembership(slug: string, request: NextRequest) {
-//   const { user } = await userFromJwt(request)
+export async function ability(slug: string) {
+  const [data, err] = await getUserMembershipAction({ slug })
 
-//   const member = await prisma.member.findFirst({
-//     where: {
-//       userId: user.id,
-//       company: {
-//         slug,
-//       },
-//     },
-//     include: {
-//       company: true,
-//     },
-//   })
+  if (err) {
+    return
+  }
+  if (!data.membership) {
+    return null
+  }
 
-//   if (!member) {
-//     throw new Error(`You're not a member of this company.`)
-//   }
+  const ability = defineAbilityFor({
+    id: data.membership.userId,
+    role: data.membership.role,
+  })
 
-//   const { company, ...membership } = member
-
-//   return { company, membership }
-// }
+  return ability
+}

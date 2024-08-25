@@ -1,37 +1,37 @@
-import { getCompaniesTablesAction } from '@/actions/companies/get-companies-tables-action'
+'use client'
+import { useParams } from 'next/navigation'
 import { columns } from './colums-3594'
 import { DataTable } from './data-table-3594'
-import { Loader2 } from 'lucide-react'
 
-export async function Table3594() {
-  const isLoading = false
-  const currentTableId = '1dc19040-4ada-4bfb-9af9-846cd6707281'
-  const [tablesData, err] = await getCompaniesTablesAction()
-
-  if (err) {
-    console.error(err)
-    return
+interface tablesData {
+  tableData: {
+    tables: {
+      id: string
+      name: string
+      createdAt: Date
+      competence: string
+      fileJson: string
+      companyId: string
+      ownerId: string
+      owner: {
+        id: string
+        name: string | null
+        avatarUrl: string | null
+      }
+    }[]
   }
-
-  const currentTable = tablesData.tables.find(
-    (table) => table.id === currentTableId,
-  )
+}
+export function Table3594({ tableData }: tablesData) {
+  const { id } = useParams<{ id: string }>()
+  const currentTable = tableData.tables.find((table) => table.id === id)
 
   console.log(currentTable)
   // const jsonData = tables[0].fileJson.t
   const data = JSON.parse(currentTable!.fileJson)
 
   return (
-    <>
-      {isLoading ? (
-        <Loader2 className="size-4 animate-spin" />
-      ) : data !== null ? (
-        <div>
-          <DataTable columns={columns} data={data} />
-        </div>
-      ) : (
-        <p>Import </p>
-      )}
-    </>
+    <div>
+      <DataTable columns={columns} data={data} />
+    </div>
   )
 }

@@ -11,16 +11,17 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String?
-  email        String   @unique
+  email        String    @unique
   passwordHash String
   avatarUrl    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  isAdmin      Boolean  @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  isAdmin      Boolean   @default(false)
   owns_tables  Tables[]
   member_on    Member[]
+  Company      Company[]
 }
 
 model Tables {
@@ -38,6 +39,12 @@ model Tables {
   ownerId String
 }
 
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MEMBER
+}
+
 model Company {
   id        String   @id @default(uuid())
   name      String
@@ -46,8 +53,12 @@ model Company {
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  members   Member[]
-  tables    Tables[]
+
+  owner   User?   @relation(fields: [ownerId], references: [id])
+  ownerId String?
+
+  members Member[]
+  tables  Tables[]
 }
 
 model Member {
@@ -58,6 +69,8 @@ model Member {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  role Role @default(MEMBER)
 
   @@unique([companyId, userId])
   @@map("member")

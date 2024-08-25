@@ -15,15 +15,24 @@ import {
 } from './ui/dropdown-menu'
 import { getInitials } from '@/utils/get-initials'
 import { getCompaniesAction } from '@/actions/companies/get-companies-action'
+import { getProfileAction } from '@/actions/auth/get-profile-action'
 
 export async function CompanySwitcher() {
   const currentCo = getCurrentCo()
-  const [data, err] = await getCompaniesAction()
-  if (err) {
+
+  const [profileData, errProfile] = await getProfileAction()
+  if (errProfile) {
     return
   }
-  const companies = data.companies
+
+  const [companiesData, errCompanies] = await getCompaniesAction()
+  if (errCompanies) {
+    return
+  }
+  const companies = companiesData.companies
   const currentCompany = companies.find((company) => company.slug === currentCo)
+  console.log(currentCompany)
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex w-[184px] items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
@@ -68,13 +77,17 @@ export async function CompanySwitcher() {
             )
           })}
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href={'/create-company'}>
-              <CircleFadingPlus className="mr-2 size-4" />
-              Cadastrar nova
-            </Link>
-          </DropdownMenuItem>
+          {profileData.user.isAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={'/create-company'}>
+                  <CircleFadingPlus className="mr-2 size-4" />
+                  Cadastrar nova
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
