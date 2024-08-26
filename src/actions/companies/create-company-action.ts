@@ -8,6 +8,7 @@ import { authProcedure } from '../procedures/auth-procedure'
 import { companySchema } from './company-schema'
 
 export const createCompanyAction = authProcedure
+  .createServerAction()
   .input(companySchema, {
     type: 'formData',
   })

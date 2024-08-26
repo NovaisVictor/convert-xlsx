@@ -6,34 +6,30 @@ import { redirect } from 'next/navigation'
 import { env } from 'process'
 import { createServerActionProcedure } from 'zsa'
 
-export const authProcedure = createServerActionProcedure()
-  .handler(async () => {
-    'use server'
+export const authProcedure = createServerActionProcedure().handler(async () => {
+  const token = cookies().get('token')?.value
+  if (!token) {
+    throw new Error('Token not found')
+  }
 
-    const token = cookies().get('token')?.value
-    if (!token) {
-      throw new Error('Token not found')
+  try {
+    const { sub } = verify(token, env.JWT_SECRET!)
+
+    if (!sub) {
+      throw new Error('User not found')
     }
 
-    try {
-      const { sub } = verify(token, env.JWT_SECRET!)
+    const user = await prisma.user.findFirst({
+      where: {
+        id: sub.toString(),
+      },
+    })
 
-      if (!sub) {
-        throw new Error('User not found')
-      }
-
-      const user = await prisma.user.findFirst({
-        where: {
-          id: sub.toString(),
-        },
-      })
-
-      if (!user) {
-        throw new Error('User not found')
-      }
-      return { user }
-    } catch (error) {
-      redirect('/api/auth/sign-out')
+    if (!user) {
+      throw new Error('User not found')
     }
-  })
-  .createServerAction()
+    return { user }
+  } catch (error) {
+    redirect('/api/auth/sign-out')
+  }
+})

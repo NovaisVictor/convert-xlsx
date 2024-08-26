@@ -25,7 +25,6 @@ export function Table3594({ tableData }: tablesData) {
   const { id } = useParams<{ id: string }>()
   const currentTable = tableData.tables.find((table) => table.id === id)
 
-  console.log(currentTable)
   // const jsonData = tables[0].fileJson.t
   const data = JSON.parse(currentTable!.fileJson)
 

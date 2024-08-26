@@ -31,7 +31,6 @@ export async function CompanySwitcher() {
   }
   const companies = companiesData.companies
   const currentCompany = companies.find((company) => company.slug === currentCo)
-  console.log(currentCompany)
 
   return (
     <DropdownMenu>

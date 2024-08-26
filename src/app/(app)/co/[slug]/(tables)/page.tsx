@@ -1,10 +1,9 @@
 import { XlsxImporter } from '@/components/uploader/xlsx-importer'
 import { TableList } from './table-list'
-import { ability, getCurrentCo } from '@/app/auth/auth'
+import { ability } from '@/app/auth/auth'
 
 export default async function Tables() {
-  const currentCo = getCurrentCo()!
-  const permissions = await ability(currentCo)
+  const permissions = await ability()
 
   return (
     <div className="space-y-6">
