@@ -2,12 +2,24 @@
 
 import { prisma } from '@/lib/prisma'
 import { authProcedure } from '../procedures/auth-procedure'
+import { z } from 'zod'
 
 export const getCompaniesAction = authProcedure
   .createServerAction()
-  .handler(async ({ ctx }) => {
-    const { user } = ctx
-
+  .output(
+    z.object({
+      companies: z.array(
+        z.object({
+          id: z.string().uuid(),
+          name: z.string(),
+          slug: z.string(),
+          cnpj: z.string(),
+          avatarUrl: z.string().nullable(),
+        }),
+      ),
+    }),
+  )
+  .handler(async ({ ctx: { user } }) => {
     if (user.isAdmin) {
       const companies = await prisma.company.findMany({
         select: {
@@ -26,6 +38,7 @@ export const getCompaniesAction = authProcedure
         id: true,
         name: true,
         slug: true,
+        cnpj: true,
         avatarUrl: true,
       },
       where: {

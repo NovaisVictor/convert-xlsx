@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getUserPermissions } from '@/utils/get-user-permissions'
 import { membershipProcedure } from '../procedures/membership-procedure'
 import { z } from 'zod'
+import { revalidateTag } from 'next/cache'
 
 export const removeMemberAction = membershipProcedure
   .createServerAction()
@@ -25,5 +26,6 @@ export const removeMemberAction = membershipProcedure
       await prisma.member.delete({
         where: { id: memberId, companyId: company.id },
       })
+      revalidateTag(`${company.slug}/members`)
     },
   )

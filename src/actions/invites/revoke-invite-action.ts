@@ -4,12 +4,13 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { membershipProcedure } from '../procedures/membership-procedure'
 import { getUserPermissions } from '@/utils/get-user-permissions'
+import { revalidateTag } from 'next/cache'
 
 export const revokeInviteAction = membershipProcedure
   .createServerAction()
   .input(
     z.object({
-      inviteId: z.string().uuid(),
+      inviteId: z.string(),
     }),
   )
   .handler(
@@ -36,5 +37,6 @@ export const revokeInviteAction = membershipProcedure
           id: inviteId,
         },
       })
+      revalidateTag(`${company.slug}/invites`)
     },
   )

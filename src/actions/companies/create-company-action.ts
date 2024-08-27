@@ -35,10 +35,4 @@ export const createCompanyAction = authProcedure
       },
     })
     revalidateTag('companies')
-
-    return {
-      success: true,
-      message: 'Successfully saved the company',
-      errors: null,
-    }
   })

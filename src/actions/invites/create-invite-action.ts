@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { membershipProcedure } from '../procedures/membership-procedure'
 import { getUserPermissions } from '@/utils/get-user-permissions'
 import { roleSchema } from '../../../casl/roles'
+import { revalidateTag } from 'next/cache'
 
 export const createInviteAction = membershipProcedure
   .createServerAction()
@@ -13,6 +14,9 @@ export const createInviteAction = membershipProcedure
       email: z.string().email(),
       role: roleSchema,
     }),
+    {
+      type: 'formData',
+    },
   )
   .output(z.object({ inviteId: z.string().uuid() }))
   .handler(
@@ -59,6 +63,8 @@ export const createInviteAction = membershipProcedure
           authorId: user.id,
         },
       })
+
+      revalidateTag(`${company.slug}/invites`)
 
       return { inviteId: invite.id }
     },

@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 import { env } from 'process'
+import { acceptInviteAction } from '../invites/accept-invite-action'
 
 export const signInAction = createServerAction()
   .input(
@@ -44,4 +45,11 @@ export const signInAction = createServerAction()
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })
+
+    const inviteId = cookies().get('inviteId')?.value
+
+    if (inviteId) {
+      await acceptInviteAction({ inviteId })
+      cookies().delete('inviteId')
+    }
   })

@@ -2,6 +2,7 @@
 import { prisma } from '@/lib/prisma'
 import { authProcedure } from '../procedures/auth-procedure'
 import { z } from 'zod'
+import { cookies } from 'next/headers'
 
 export const acceptInviteAction = authProcedure
   .createServerAction()
@@ -39,4 +40,5 @@ export const acceptInviteAction = authProcedure
         },
       }),
     ])
+    cookies().delete('inviteId')
   })

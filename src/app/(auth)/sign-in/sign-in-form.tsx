@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useServerAction } from 'zsa-react'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { signInAction } from '@/actions/auth/sign-in-action'
 
 export function SignInForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const { isPending, executeFormAction, error } = useServerAction(
     signInAction,
@@ -32,7 +33,12 @@ export function SignInForm() {
       <form action={executeFormAction} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="email">E-mail</Label>
-          <Input name="email" type="email" id="email" />
+          <Input
+            name="email"
+            type="email"
+            id="email"
+            defaultValue={searchParams.get('email') ?? ''}
+          />
           {error?.fieldErrors?.email && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
               {error?.fieldErrors?.email}

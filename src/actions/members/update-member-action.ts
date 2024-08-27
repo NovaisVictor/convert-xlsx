@@ -5,6 +5,7 @@ import { getUserPermissions } from '@/utils/get-user-permissions'
 import { membershipProcedure } from '../procedures/membership-procedure'
 import { z } from 'zod'
 import { roleSchema } from '../../../casl/roles'
+import { revalidateTag } from 'next/cache'
 
 export const updateMembersAction = membershipProcedure
   .createServerAction()
@@ -25,4 +26,5 @@ export const updateMembersAction = membershipProcedure
       where: { id: input.memberId, companyId: ctx.company.id },
       data: { role: input.role },
     })
+    revalidateTag(`${ctx.company.slug}/members`)
   })

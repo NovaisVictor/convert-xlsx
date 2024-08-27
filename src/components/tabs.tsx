@@ -18,16 +18,6 @@ export async function Tabs() {
           <NavLink href={`/co/${currentCo}`}>Tabelas</NavLink>
         </Button>
 
-        {permissions?.can('manage', 'Company') && (
-          <Button
-            variant={'ghost'}
-            size={'sm'}
-            className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
-            asChild
-          >
-            <NavLink href={`/co/${currentCo}/settings`}>Configurações</NavLink>
-          </Button>
-        )}
         {permissions?.can('get', 'User') && (
           <Button
             variant={'ghost'}
@@ -36,6 +26,17 @@ export async function Tabs() {
             asChild
           >
             <NavLink href={`/co/${currentCo}/members`}>Membros</NavLink>
+          </Button>
+        )}
+
+        {permissions?.can('manage', 'Company') && (
+          <Button
+            variant={'ghost'}
+            size={'sm'}
+            className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+            asChild
+          >
+            <NavLink href={`/co/${currentCo}/settings`}>Configurações</NavLink>
           </Button>
         )}
       </nav>
