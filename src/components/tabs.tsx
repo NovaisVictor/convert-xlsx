@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 
 export async function Tabs() {
   const currentCo = getCurrentCo()!
-  const permissions = await ability(currentCo)
+  const permissions = await ability()
 
   return (
     <div className="border-b py-4">
@@ -17,6 +17,17 @@ export async function Tabs() {
         >
           <NavLink href={`/co/${currentCo}`}>Tabelas</NavLink>
         </Button>
+
+        {permissions?.can('get', 'User') && (
+          <Button
+            variant={'ghost'}
+            size={'sm'}
+            className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+            asChild
+          >
+            <NavLink href={`/co/${currentCo}/members`}>Membros</NavLink>
+          </Button>
+        )}
 
         {permissions?.can('manage', 'Company') && (
           <Button

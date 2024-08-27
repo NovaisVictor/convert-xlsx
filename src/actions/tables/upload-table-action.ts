@@ -4,8 +4,8 @@ import { getProfileAction } from '@/actions/auth/get-profile-action'
 import { getCompanyAction } from '@/actions/companies/get-company-action'
 
 import { prisma } from '@/lib/prisma'
-
 import { revalidateTag } from 'next/cache'
+
 import { z } from 'zod'
 
 const uploadTableSchema = z.object({

@@ -9,6 +9,7 @@ import { getCurrentCo } from '@/app/auth/auth'
 import { companySchema } from './company-schema'
 
 export const updateCompanyAction = authProcedure
+  .createServerAction()
   .input(companySchema, {
     type: 'formData',
   })

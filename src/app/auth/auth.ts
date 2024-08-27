@@ -10,8 +10,8 @@ export function getCurrentCo() {
   return cookies().get('co')?.value ?? null
 }
 
-export async function ability(slug: string) {
-  const [data, err] = await getUserMembershipAction({ slug })
+export async function ability() {
+  const [data, err] = await getUserMembershipAction()
 
   if (err) {
     return

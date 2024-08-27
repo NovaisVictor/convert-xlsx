@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentCo } from '@/app/auth/auth'
 
 export const getCompaniesTablesAction = authProcedure
+  .createServerAction()
   .output(
     z.object({
       tables: z.array(

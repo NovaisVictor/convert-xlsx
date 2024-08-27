@@ -8,6 +8,7 @@ import { authProcedure } from '../procedures/auth-procedure'
 import { companySchema } from './company-schema'
 
 export const createCompanyAction = authProcedure
+  .createServerAction()
   .input(companySchema, {
     type: 'formData',
   })
@@ -34,10 +35,4 @@ export const createCompanyAction = authProcedure
       },
     })
     revalidateTag('companies')
-
-    return {
-      success: true,
-      message: 'Successfully saved the company',
-      errors: null,
-    }
   })

@@ -7,6 +7,7 @@ import { getCurrentCo } from '@/app/auth/auth'
 import { z } from 'zod'
 
 export const getCompanyAction = authProcedure
+  .createServerAction()
   .output(
     z.object({
       company: z.object({
@@ -14,6 +15,7 @@ export const getCompanyAction = authProcedure
         name: z.string(),
         slug: z.string(),
         cnpj: z.string(),
+        ownerId: z.string().nullable(),
         avatarUrl: z.string().nullable(),
       }),
     }),
@@ -27,6 +29,7 @@ export const getCompanyAction = authProcedure
         slug: true,
         cnpj: true,
         avatarUrl: true,
+        ownerId: true,
       },
       where: {
         slug: currentCo,

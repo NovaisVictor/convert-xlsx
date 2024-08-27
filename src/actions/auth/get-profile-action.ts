@@ -6,6 +6,7 @@ import { authProcedure } from '../procedures/auth-procedure'
 import { z } from 'zod'
 
 export const getProfileAction = authProcedure
+  .createServerAction()
   .output(
     z.object({
       user: z.object({

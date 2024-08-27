@@ -1,14 +1,13 @@
+'use server'
 import { prisma } from '@/lib/prisma'
 import { authProcedure } from '../procedures/auth-procedure'
-import { string, z } from 'zod'
+import { z } from 'zod'
 import { roleSchema } from '../../../casl/roles'
+import { getCurrentCo } from '@/app/auth/auth'
+import type { inferServerActionReturnData } from 'zsa'
 
 export const getUserMembershipAction = authProcedure
-  .input(
-    z.object({
-      slug: string(),
-    }),
-  )
+  .createServerAction()
   .output(
     z.object({
       company: z.object({
@@ -28,7 +27,9 @@ export const getUserMembershipAction = authProcedure
       }),
     }),
   )
-  .handler(async ({ ctx: { user }, input: { slug } }) => {
+  .handler(async ({ ctx: { user } }) => {
+    const slug = getCurrentCo()!
+
     const member = await prisma.member.findFirst({
       where: {
         userId: user.id,
@@ -49,3 +50,8 @@ export const getUserMembershipAction = authProcedure
 
     return { company, membership }
   })
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type getUserMembershipActionReturnData = inferServerActionReturnData<
+  typeof getUserMembershipAction
+>
