@@ -15,13 +15,13 @@ import {
 import { getCurrentCo } from '@/app/auth/auth'
 import Link from 'next/link'
 import { getCompaniesTablesAction } from '@/actions/companies/get-companies-tables-action'
+import { format } from 'date-fns'
 dayjs.extend(relativeTime)
 
 export async function TableList() {
   const currentCo = getCurrentCo()
 
   const [data, err] = await getCompaniesTablesAction()
-
   if (err) {
     console.error(err.data)
     return
@@ -36,7 +36,7 @@ export async function TableList() {
                 {table.name}
               </CardTitle>
               <CardDescription className="line-clamp-2 leading-relaxed">
-                {table.competence.slice(0, 2)}/{table.competence.slice(2, 6)}
+                {format(table.competence, 'MM/yyyy')}
               </CardDescription>
             </CardHeader>
             <CardFooter className="flex items-center gap-1.5">

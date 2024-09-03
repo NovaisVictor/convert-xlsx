@@ -14,7 +14,7 @@ export const getCompaniesTablesAction = authProcedure
           id: z.string(),
           name: z.string(),
           createdAt: z.date(),
-          competence: z.string(),
+          competence: z.date(),
           fileJson: z.string(),
           companyId: z.string(),
           ownerId: z.string(),

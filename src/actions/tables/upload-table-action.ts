@@ -10,7 +10,7 @@ import { z } from 'zod'
 
 const uploadTableSchema = z.object({
   name: z.string({ message: 'Por favor, insira um nome' }),
-  competence: z.string({ message: 'Por favor, insira uma competência' }),
+  competence: z.date({ message: 'Por favor, insira uma competência' }),
   file: z.string(),
 })
 

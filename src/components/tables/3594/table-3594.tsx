@@ -9,7 +9,7 @@ interface tablesData {
       id: string
       name: string
       createdAt: Date
-      competence: string
+      competence: Date
       fileJson: string
       companyId: string
       ownerId: string

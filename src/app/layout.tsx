@@ -4,6 +4,7 @@ import './globals.css'
 import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
 import { Providers } from './providers'
+import { ColorSchemeScript } from '@mantine/core'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +21,9 @@ export default function RootLayout({
   dayjs.locale('pt-BR')
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={`${inter.className}`}>
         <Providers>{children}</Providers>
       </body>

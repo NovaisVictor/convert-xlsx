@@ -1,31 +1,82 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select'
+'use client'
+
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from './ui/button'
+import { useState, useEffect } from 'react'
+import { addYears, format, subMonths, subYears } from 'date-fns'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 export function CompetenceSwitcher() {
+  const [year, setYear] = useState(new Date())
+  const [selectedMonth, setSelectedMonth] = useState(
+    subMonths(new Date(), 1).getMonth(),
+  )
+  const [selectedDate, setSelectedDate] = useState(
+    new Date(year.getFullYear(), selectedMonth),
+  )
+
+  useEffect(() => {
+    setSelectedDate(new Date(year.getFullYear(), selectedMonth))
+  }, [year, selectedMonth])
+
+  const handleMonthClick = (monthIndex: number) => {
+    setSelectedMonth(monthIndex)
+  }
+
   return (
-    <Select>
-      <SelectTrigger className="flex w-[180px] justify-center gap-3 rounded-full">
-        <SelectValue placeholder="Competência" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="01">Janeiro</SelectItem>
-        <SelectItem value="02">Fevereiro</SelectItem>
-        <SelectItem value="03">Março</SelectItem>
-        <SelectItem value="04">Abril</SelectItem>
-        <SelectItem value="05">Maio</SelectItem>
-        <SelectItem value="06">Junho</SelectItem>
-        <SelectItem value="07">Julho</SelectItem>
-        <SelectItem value="08">Agosto</SelectItem>
-        <SelectItem value="09">Setembro</SelectItem>
-        <SelectItem value="10">Outubro</SelectItem>
-        <SelectItem value="11">Novembro</SelectItem>
-        <SelectItem value="12">Dezembro</SelectItem>
-      </SelectContent>
-    </Select>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">{format(selectedDate, 'MM/yyyy')}</Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 border-none">
+        <div className="border justify-center flex flex-col items-center rounded-md rounded-t-xl gap-3">
+          <div className="flex justify-around w-full bg-primary rounded-t-xl py-2 items-center">
+            <Button
+              onClick={() => setYear(subYears(year, 1))}
+              aria-label="Ano Anterior"
+            >
+              <ChevronLeft />
+            </Button>
+            <span>{year.getFullYear()}</span>
+            <Button
+              onClick={() => setYear(addYears(year, 1))}
+              aria-label="Próximo Ano"
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+          <div className="grid grid-cols-4 gap-4 py-4 uppercase px-2">
+            {[
+              'Jan',
+              'Fev',
+              'Mar',
+              'Abr',
+              'Mai',
+              'Jun',
+              'Jul',
+              'Ago',
+              'Set',
+              'Out',
+              'Nov',
+              'Dez',
+            ].map((month, index) => (
+              <Button
+                key={index}
+                variant={selectedMonth === index ? 'default' : 'ghost'}
+                onClick={() => handleMonthClick(index)}
+                aria-label={`Selecionar ${month}`}
+              >
+                {month}
+              </Button>
+            ))}
+          </div>
+          <div className="py-2">
+            <span>
+              Data Selecionada: {selectedDate.toLocaleDateString('pt-BR')}
+            </span>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
