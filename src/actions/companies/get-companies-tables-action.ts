@@ -7,6 +7,11 @@ import { getCurrentCo } from '@/app/auth/auth'
 
 export const getCompaniesTablesAction = authProcedure
   .createServerAction()
+  .input(
+    z.object({
+      competence: z.date(),
+    }),
+  )
   .output(
     z.object({
       tables: z.array(
@@ -14,7 +19,7 @@ export const getCompaniesTablesAction = authProcedure
           id: z.string(),
           name: z.string(),
           createdAt: z.date(),
-          competence: z.string(),
+          competence: z.date(),
           fileJson: z.string(),
           companyId: z.string(),
           ownerId: z.string(),
@@ -28,7 +33,8 @@ export const getCompaniesTablesAction = authProcedure
     }),
   )
 
-  .handler(async () => {
+  .handler(async ({ input: { competence } }) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     const currentCo = getCurrentCo()!
 
     const company = await prisma.company.findUniqueOrThrow({
@@ -36,6 +42,12 @@ export const getCompaniesTablesAction = authProcedure
         slug: currentCo,
       },
     })
+
+    const year = competence.getFullYear()
+    const month = competence.getMonth() // getMonth() retorna 0-11
+
+    const startDate = new Date(year, month, 1) // Primeiro dia do mês
+    const endDate = new Date(year, month + 1, 0) // Último dia do mês
 
     const tables = await prisma.tables.findMany({
       select: {
@@ -56,6 +68,10 @@ export const getCompaniesTablesAction = authProcedure
       },
       where: {
         companyId: company.id,
+        competence: {
+          gte: startDate,
+          lte: endDate,
+        },
       },
       orderBy: {
         createdAt: 'desc',

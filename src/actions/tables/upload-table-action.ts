@@ -38,6 +38,7 @@ export async function uploadTableAction(data: FormData) {
     where: {
       fileJson: file,
       companyId: company.company.id,
+      competence,
     },
   })
 

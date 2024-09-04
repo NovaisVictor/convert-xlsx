@@ -17,16 +17,12 @@ import { toast } from 'sonner'
 import { useFormState } from '@/hooks/use-form-state'
 import { useState } from 'react'
 import { convertXlsx } from '@/utils/convert-xlsx'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from '../ui/input-otp'
 import { uploadTableAction } from '@/actions/tables/upload-table-action'
+import { CompetenceSelect } from './competence-select'
 
 export function XlsxImporter() {
   const [files, setFiles] = useState<File[]>([])
+  const [competence, setCompetence] = useState(new Date())
 
   const [{ errors }, handleSubmit, isPending] = useFormState(
     async (data) => {
@@ -37,6 +33,7 @@ export function XlsxImporter() {
       const stringTable = JSON.stringify(table)
 
       data.append('file', stringTable)
+      data.append('competence', competence.toISOString())
       return uploadTableAction(data)
     },
     () => {
@@ -73,20 +70,8 @@ export function XlsxImporter() {
             )}
           </div>
           <div className="space-y-2">
-            <Label>Competência</Label>
-            <InputOTP maxLength={6} name="competence">
-              <InputOTPGroup>
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-              </InputOTPGroup>
-              <InputOTPSeparator />
-              <InputOTPGroup>
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
-                <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
-              </InputOTPGroup>
-            </InputOTP>
+            <Label className="mr-4">Competência</Label>
+            <CompetenceSelect onDateSelect={setCompetence} />
             {errors?.competence && (
               <p className="text-xs font-medium text-red-500 dark:text-red-400">
                 {errors.competence[0]}

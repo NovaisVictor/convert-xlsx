@@ -28,7 +28,7 @@ model User {
 model Tables {
   id         String   @id @default(uuid())
   name       String
-  competence String
+  competence DateTime @default(now())
   fileJson   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

@@ -1,42 +1,30 @@
 'use client'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from './ui/button'
 import { useState, useEffect } from 'react'
 import { addYears, format, subMonths, subYears } from 'date-fns'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { useCompetence } from './context/competence-context'
-import { useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Button } from '@/components/ui/button'
 
-export function CompetenceSwitcher() {
-  const { slug: currentCo } = useParams<{
-    slug: string
-  }>()
-  const queryClient = useQueryClient()
-  const { setCompetence } = useCompetence()
+interface CompetenceSelectProps {
+  onDateSelect: (date: Date) => void
+}
 
-  const [year, setYear] = useState(() => {
-    const savedDate = localStorage.getItem('selectedDate')
-    return savedDate ? new Date(savedDate) : new Date()
-  })
+export function CompetenceSelect({ onDateSelect }: CompetenceSelectProps) {
+  const [year, setYear] = useState(new Date())
 
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const savedDate = localStorage.getItem('selectedDate')
-    return savedDate
-      ? new Date(savedDate).getMonth()
-      : subMonths(new Date(), 1).getMonth()
-  })
+  const [selectedMonth, setSelectedMonth] = useState(
+    subMonths(new Date(), 1).getMonth(),
+  )
 
   useEffect(() => {
     const newDate = new Date(year.getFullYear(), selectedMonth)
-
-    setCompetence(newDate)
-    localStorage.setItem('selectedDate', newDate.toISOString())
-    queryClient.invalidateQueries({
-      queryKey: ['tables', newDate.toISOString(), currentCo],
-    })
-  }, [year, selectedMonth, setCompetence, queryClient, currentCo])
+    onDateSelect(newDate)
+  }, [year, selectedMonth, onDateSelect])
 
   const handleMonthClick = (monthIndex: number) => {
     setSelectedMonth(monthIndex)
@@ -90,15 +78,6 @@ export function CompetenceSwitcher() {
                 {month}
               </Button>
             ))}
-          </div>
-          <div className="py-2">
-            <span>
-              Data Selecionada:{' '}
-              {format(
-                new Date(year.getFullYear(), selectedMonth),
-                'dd/MM/yyyy',
-              )}
-            </span>
           </div>
         </div>
       </PopoverContent>
