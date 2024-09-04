@@ -13,14 +13,24 @@ export const updateCompanyAction = authProcedure
   .input(companySchema, {
     type: 'formData',
   })
-  .handler(async ({ input: { name, cpfCnpj } }) => {
+  .handler(async ({ input: { name, cnpj } }) => {
     // const { user } = ctx
     const currentCo = getCurrentCo()!
+
+    const sameCnpjCompany = await prisma.company.findFirst({
+      where: {
+        cnpj,
+      },
+    })
+
+    if (sameCnpjCompany) {
+      throw new Error('Company with this cnpj already exists')
+    }
 
     await prisma.company.update({
       data: {
         name,
-        cnpj: cpfCnpj,
+        cnpj,
       },
       where: {
         slug: currentCo,

@@ -16,6 +16,15 @@ import {
 import { getInitials } from '@/utils/get-initials'
 import { getCompaniesAction } from '@/actions/companies/get-companies-action'
 import { getProfileAction } from '@/actions/auth/get-profile-action'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './ui/sheet'
+import { CompanyForm } from '@/app/(app)/create-company/company-form'
+import { Button } from './ui/button'
 
 export async function CompanySwitcher() {
   const currentCo = getCurrentCo()
@@ -80,10 +89,23 @@ export async function CompanySwitcher() {
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={'/create-company'}>
-                  <CircleFadingPlus className="mr-2 size-4" />
-                  Cadastrar nova
-                </Link>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant={'link'} className="text-foreground px-2">
+                      <CircleFadingPlus className="mr-2 size-4" />
+                      Cadastrar nova
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Cadastrar empresa</SheetTitle>
+                    </SheetHeader>
+
+                    <div className="py-4">
+                      <CompanyForm />
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </DropdownMenuItem>
             </>
           )}

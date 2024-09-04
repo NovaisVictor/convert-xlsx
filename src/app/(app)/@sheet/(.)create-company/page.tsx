@@ -5,7 +5,7 @@ import { CompanyForm } from '../../create-company/company-form'
 
 export default function CreateCompany() {
   return (
-    <Sheet defaultOpen>
+    <Sheet>
       <InterceptedSheetContent>
         <SheetHeader>
           <SheetTitle>Cadastrar empresa</SheetTitle>

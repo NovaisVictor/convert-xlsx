@@ -10,6 +10,7 @@ import { updateCompanyAction } from '@/actions/companies/update-company-aciont'
 import { useServerAction } from 'zsa-react'
 import { toast } from 'sonner'
 import type { CompanySchema } from '@/actions/companies/company-schema'
+import { redirect } from 'next/navigation'
 
 interface CompanyFormProps {
   isUpdating?: boolean
@@ -23,12 +24,18 @@ export function CompanyForm({
   const formAction = isUpdating ? updateCompanyAction : createCompanyAction
 
   const { isPending, executeFormAction, error } = useServerAction(formAction, {
-    onSuccess() {
+    onSuccess({ data }) {
       toast.success(
         isUpdating
           ? 'Empresa atualizada com sucesso'
           : 'Empresa criada com sucesso',
       )
+      if (!isUpdating) {
+        redirect(`/co/${data.slug}`)
+      }
+    },
+    onError({ err }) {
+      toast.error(`${err.message}`)
     },
   })
 
@@ -49,16 +56,16 @@ export function CompanyForm({
         )}
       </div>
       <div className="space-y-1">
-        <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
+        <Label htmlFor="cnpj">CNPJ</Label>
         <Input
-          name="cpfCnpj"
+          name="cnpj"
           type="text"
-          id="cpfCnpj"
-          defaultValue={initialData?.cpfCnpj}
+          id="cnpj"
+          defaultValue={initialData?.cnpj}
         />
-        {error?.fieldErrors?.cpfCnpj && (
+        {error?.fieldErrors?.cnpj && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {error.fieldErrors.cpfCnpj}
+            {error.fieldErrors.cnpj}
           </p>
         )}
       </div>
