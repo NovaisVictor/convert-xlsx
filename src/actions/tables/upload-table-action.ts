@@ -10,7 +10,7 @@ import { z } from 'zod'
 
 const uploadTableSchema = z.object({
   name: z.string({ message: 'Por favor, insira um nome' }),
-  competence: z.date({ message: 'Por favor, insira uma competência' }),
+  competence: z.string({ message: 'Por favor, insira uma competência' }),
   file: z.string(),
 })
 
@@ -38,6 +38,7 @@ export async function uploadTableAction(data: FormData) {
     where: {
       fileJson: file,
       companyId: company.company.id,
+      competence,
     },
   })
 
