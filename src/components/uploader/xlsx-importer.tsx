@@ -18,7 +18,7 @@ import { useFormState } from '@/hooks/use-form-state'
 import { useState } from 'react'
 import { convertXlsx } from '@/utils/convert-xlsx'
 import { uploadTableAction } from '@/actions/tables/upload-table-action'
-import { CompetenceSelect } from './competence-select'
+import { CompetenceSelect } from '../competence-select'
 
 export function XlsxImporter() {
   const [files, setFiles] = useState<File[]>([])

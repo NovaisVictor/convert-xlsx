@@ -4,3 +4,4 @@
 # Filtro por competência
 # Validar CPF/CNPJ
 # Validação maior de datas na competência
+# Shutdown Company

@@ -33,7 +33,7 @@ model Tables {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
   owner   User   @relation(fields: [ownerId], references: [id])
@@ -66,13 +66,13 @@ model Invite {
 model Company {
   id        String   @id @default(uuid())
   name      String
-  cnpj      String
+  cnpj      String   @unique
   slug      String   @unique
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  owner   User?   @relation(fields: [ownerId], references: [id])
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String?
 
   members Member[]
@@ -83,7 +83,7 @@ model Company {
 model Member {
   id String @id @default(uuid())
 
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
