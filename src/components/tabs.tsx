@@ -15,7 +15,15 @@ export async function Tabs() {
           className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
           asChild
         >
-          <NavLink href={`/co/${currentCo}`}>Tabelas</NavLink>
+          <NavLink href={`/co/${currentCo}`}>Dashboard</NavLink>
+        </Button>
+        <Button
+          variant={'ghost'}
+          size={'sm'}
+          className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+          asChild
+        >
+          <NavLink href={`/co/${currentCo}/tables`}>Tabelas</NavLink>
         </Button>
 
         {permissions?.can('get', 'User') && (
