@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { createCompanyAction } from '@/actions/companies/create-company-action'
-import { updateCompanyAction } from '@/actions/companies/update-company-aciont'
+import { updateCompanyAction } from '@/actions/companies/update-company-action'
 import { useServerAction } from 'zsa-react'
 import { toast } from 'sonner'
 import type { CompanySchema } from '@/actions/companies/company-schema'

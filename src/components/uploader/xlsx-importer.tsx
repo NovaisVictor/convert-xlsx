@@ -61,7 +61,7 @@ export function XlsxImporter() {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Nome</Label>
+            <Label>Modelo da tabela</Label>
             <Input type="text" name="name" id="name" />
             {errors?.name && (
               <p className="text-xs font-medium text-red-500 dark:text-red-400">

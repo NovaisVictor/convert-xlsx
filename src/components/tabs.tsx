@@ -1,30 +1,68 @@
-import { ability, getCurrentCo } from '@/app/auth/auth'
+import { ability, getCurrentCo, isAdmin } from '@/app/auth/auth'
 import { NavLink } from './nav-link'
 import { Button } from './ui/button'
 
 export async function Tabs() {
   const currentCo = getCurrentCo()!
   const permissions = await ability()
+  const admin = await isAdmin()
 
   return (
     <div className="border-b py-4">
       <nav className="mx-auto flex max-w-[1200px] items-center gap-2">
-        <Button
-          variant={'ghost'}
-          size={'sm'}
-          className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
-          asChild
-        >
-          <NavLink href={`/co/${currentCo}`}>Dashboard</NavLink>
-        </Button>
-        <Button
-          variant={'ghost'}
-          size={'sm'}
-          className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
-          asChild
-        >
-          <NavLink href={`/co/${currentCo}/tables`}>Tabelas</NavLink>
-        </Button>
+        {currentCo && (
+          <>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+              asChild
+            >
+              <NavLink href={`/co/${currentCo}`}>Dashboard</NavLink>
+            </Button>
+          </>
+        )}
+
+        {currentCo && (
+          <>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+              asChild
+            >
+              <NavLink href={`/co/${currentCo}/tables`}>Auditorias</NavLink>
+            </Button>
+          </>
+        )}
+
+        {currentCo && (
+          <>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+              asChild
+            >
+              <NavLink href={`/co/${currentCo}/summary`}>Resumo</NavLink>
+            </Button>
+          </>
+        )}
+
+        {currentCo && (
+          <>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
+              asChild
+            >
+              <NavLink href={`/co/${currentCo}/competence`}>
+                Competência
+              </NavLink>
+            </Button>
+          </>
+        )}
 
         {permissions?.can('get', 'User') && (
           <Button
@@ -37,14 +75,14 @@ export async function Tabs() {
           </Button>
         )}
 
-        {permissions?.can('manage', 'Company') && (
+        {admin && (
           <Button
             variant={'ghost'}
             size={'sm'}
             className="border border-transparent text-muted-foreground data-[current=true]:border-input data-[current=true]:text-foreground"
             asChild
           >
-            <NavLink href={`/co/${currentCo}/settings`}>Configurações</NavLink>
+            <NavLink href={`/clients`}>Clientes</NavLink>
           </Button>
         )}
       </nav>

@@ -1,11 +1,17 @@
+import { isAdmin } from '@/app/auth/auth'
 import { Header } from '@/components/header'
 import { Tabs } from '@/components/tabs'
+import { redirect } from 'next/navigation'
 
-export default async function CoLayout({
+export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const admin = await isAdmin()
+  if (!admin) {
+    redirect('/')
+  }
   return (
     <div className="px-4">
       <div className="pt-6">

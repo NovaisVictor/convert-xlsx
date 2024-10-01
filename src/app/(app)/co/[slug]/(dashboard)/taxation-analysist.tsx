@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export function TaxationAnalysist() {
   return (
-    <div className="grid grid-cols-6 gap-4">
+    <div className="grid grid-cols- gap-4">
       <Card className="col-span-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
