@@ -30,6 +30,7 @@ export const authProcedure = createServerActionProcedure().handler(async () => {
     }
     return { user }
   } catch (error) {
+    console.error(error)
     redirect('/api/auth/sign-out')
   }
 })
