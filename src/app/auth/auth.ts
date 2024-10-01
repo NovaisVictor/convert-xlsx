@@ -1,6 +1,7 @@
 import { getUserMembershipAction } from '@/actions/auth/get-membership-action'
 import { cookies } from 'next/headers'
 import { defineAbilityFor } from '../../../casl'
+import { getProfileAction } from '@/actions/auth/get-profile-action'
 
 export function isAuthenticated() {
   return !!cookies().get('token')?.value
@@ -26,4 +27,14 @@ export async function ability() {
   })
 
   return ability
+}
+
+export async function isAdmin() {
+  const [data, err] = await getProfileAction()
+
+  if (err) {
+    throw new Error(err.message)
+  }
+
+  return data.user.isAdmin
 }

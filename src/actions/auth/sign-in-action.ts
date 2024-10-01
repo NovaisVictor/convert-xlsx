@@ -43,6 +43,7 @@ export const signInAction = createServerAction()
 
     cookies().set('token', token, {
       path: '/',
+      httpOnly: true,
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })
 
