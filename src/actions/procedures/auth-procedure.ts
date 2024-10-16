@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { verify } from 'jsonwebtoken'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 import { env } from 'process'
 import { createServerActionProcedure } from 'zsa'
@@ -30,7 +29,6 @@ export const authProcedure = createServerActionProcedure().handler(async () => {
     }
     return { user }
   } catch (error) {
-    console.error(error)
-    redirect('/api/auth/sign-out')
+    throw new Error('Authentication failed')
   }
 })
