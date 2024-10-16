@@ -10,29 +10,35 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 
 export function CompetenceSwitcher() {
-  const { slug: currentCo } = useParams<{
-    slug: string
-  }>()
+  const { slug: currentCo } = useParams<{ slug: string }>()
   const queryClient = useQueryClient()
   const { setCompetence } = useCompetence()
 
-  const [year, setYear] = useState(() => {
-    const savedDate = localStorage.getItem('selectedDate')
-    return savedDate ? new Date(savedDate) : new Date()
-  })
+  const [year, setYear] = useState(new Date())
+  const [selectedMonth, setSelectedMonth] = useState(
+    subMonths(new Date(), 1).getMonth(),
+  )
 
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const savedDate = localStorage.getItem('selectedDate')
-    return savedDate
-      ? new Date(savedDate).getMonth()
-      : subMonths(new Date(), 1).getMonth()
-  })
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedDate = localStorage.getItem('selectedDate')
+      if (savedDate) {
+        const savedDateObj = new Date(savedDate)
+        setYear(savedDateObj)
+        setSelectedMonth(savedDateObj.getMonth())
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const newDate = new Date(year.getFullYear(), selectedMonth)
 
     setCompetence(newDate)
-    localStorage.setItem('selectedDate', newDate.toISOString())
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedDate', newDate.toISOString())
+    }
+
     queryClient.invalidateQueries({
       queryKey: ['tables', newDate.toISOString(), currentCo],
     })
@@ -41,7 +47,6 @@ export function CompetenceSwitcher() {
   const handleMonthClick = (monthIndex: number) => {
     setSelectedMonth(monthIndex)
   }
-
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -90,15 +95,6 @@ export function CompetenceSwitcher() {
                 {month}
               </Button>
             ))}
-          </div>
-          <div className="py-2">
-            <span>
-              Data Selecionada:{' '}
-              {format(
-                new Date(year.getFullYear(), selectedMonth),
-                'dd/MM/yyyy',
-              )}
-            </span>
           </div>
         </div>
       </PopoverContent>

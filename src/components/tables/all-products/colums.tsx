@@ -1,6 +1,5 @@
 'use client'
 
-import type { Sheet3594 } from '@/utils/convert-xlsx'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
@@ -14,9 +13,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export const columns: ColumnDef<Sheet3594>[] = [
+type Products = {
+  id: string
+  emission: Date
+  productCode: string
+  productDecription: string
+  nmcCode: string
+  cfop: string
+  icmsBase: string
+  pisCofinsBase: string
+}
+
+export const columns: ColumnDef<Products>[] = [
   {
-    accessorKey: 'COD_ITEM',
+    accessorKey: 'productCode',
     header: ({ column }) => {
       return (
         <Button
@@ -30,24 +40,28 @@ export const columns: ColumnDef<Sheet3594>[] = [
     },
   },
   {
-    accessorKey: 'ALIQ_ICMS',
+    accessorKey: 'nmcCode',
     header: 'ALIQ_ICMS',
   },
   {
-    accessorKey: 'ALIQ_ICMS_PADRAO',
+    accessorKey: 'cfop',
     header: 'ALIQ_ICMS_PADRAO',
   },
   {
-    accessorKey: 'COD_NCM',
+    accessorKey: 'icmsBase',
     header: 'COD_NCM',
   },
   {
-    accessorKey: 'FUNDAMENTO',
+    accessorKey: 'pisCofinsBase',
     header: 'FUNDAMENTO',
   },
   {
-    accessorKey: 'OBS',
+    accessorKey: 'productDecription',
     header: 'OBS',
+  },
+  {
+    accessorKey: 'emission',
+    header: 'EMISSION',
   },
   {
     id: 'actions',
@@ -65,7 +79,7 @@ export const columns: ColumnDef<Sheet3594>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(data.COD_ITEM)}
+              onClick={() => navigator.clipboard.writeText(data.productCode)}
             >
               Copy COD_ITEM
             </DropdownMenuItem>

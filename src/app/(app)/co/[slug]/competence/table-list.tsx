@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card'
 
 import Link from 'next/link'
-import { getCompaniesTablesAction } from '@/actions/companies/get-companies-tables-action'
+import { getCompanyTablesAction } from '@/actions/companies/get-company-tables-action'
 import { format } from 'date-fns'
 import { useServerActionQuery } from '@/hooks/server-action-hooks'
 import { useParams } from 'next/navigation'
@@ -28,9 +28,9 @@ export function TableList() {
   }>()
 
   const { competence } = useCompetence()
-  const { isLoading, data } = useServerActionQuery(getCompaniesTablesAction, {
-    queryKey: [`tables`, competence, currentCo],
+  const { isLoading, data } = useServerActionQuery(getCompanyTablesAction, {
     input: { competence },
+    queryKey: [`tables`],
   })
 
   return (
@@ -57,7 +57,7 @@ export function TableList() {
               <Card key={table.id} className="flex flex-col justify-between">
                 <CardHeader>
                   <CardTitle className="text-xl font-medium">
-                    {table.name}
+                    {table.fileName}
                   </CardTitle>
                   <CardDescription className="line-clamp-2 leading-relaxed">
                     {format(table.competence, 'MM/yyyy')}
