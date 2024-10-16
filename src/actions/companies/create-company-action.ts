@@ -36,6 +36,15 @@ export const createCompanyAction = authProcedure
       throw new Error('Company with this cnpj already exists')
     }
 
+    const superAdmins = await prisma.user.findMany({
+      where: {
+        isAdmin: true,
+      },
+    })
+
+    const data = superAdmins.map((user) => {
+      return { userId: user.id, role: 'SUPER_ADMIN' as const }
+    })
     const company = await prisma.company.create({
       data: {
         name,
@@ -43,9 +52,8 @@ export const createCompanyAction = authProcedure
         slug,
         ownerId: user.id,
         members: {
-          create: {
-            userId: user.id,
-            role: 'SUPER_ADMIN',
+          createMany: {
+            data,
           },
         },
       },
