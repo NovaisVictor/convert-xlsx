@@ -15,12 +15,11 @@ export const getCompanyTableAction = authProcedure
     z.object({
       table: z.object({
         id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
+        fileName: z.string(),
         competence: z.date(),
-        fileJson: z.string(),
         companyId: z.string(),
         ownerId: z.string(),
+        createdAt: z.date(),
         owner: z.object({
           id: z.string(),
           name: z.string().nullable(),
@@ -31,16 +30,13 @@ export const getCompanyTableAction = authProcedure
   )
 
   .handler(async ({ input: { id } }) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    const table = await prisma.tables.findUnique({
+    const table = await prisma.importedTable.findUnique({
       select: {
         id: true,
-        name: true,
+        fileName: true,
         competence: true,
         ownerId: true,
         companyId: true,
-        fileJson: true,
         createdAt: true,
         owner: {
           select: {
@@ -56,8 +52,8 @@ export const getCompanyTableAction = authProcedure
     })
 
     if (!table) {
-      throw new Error(`Table with id ${id} not found`) // Lança um erro se não encontrado
+      throw new Error(`Table with id ${id} not found`)
     }
 
-    return { table } // Aqui 'table' nunca será null
+    return { table }
   })

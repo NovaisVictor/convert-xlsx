@@ -1,77 +1,90 @@
 'use server'
 
-import { getProfileAction } from '@/actions/auth/get-profile-action'
-import { getCompanyAction } from '@/actions/companies/get-company-action'
-
-import { prisma } from '@/lib/prisma'
-import { revalidateTag } from 'next/cache'
-
 import { z } from 'zod'
+import { membershipProcedure } from '../procedures/membership-procedure'
+import { prisma } from '@/lib/prisma'
 
-const uploadTableSchema = z.object({
-  name: z.string({ message: 'Por favor, insira um nome' }),
-  competence: z.string({ message: 'Por favor, insira uma competência' }),
-  file: z.string(),
-})
+export const uploadTableAction = membershipProcedure
+  .createServerAction()
+  .input(
+    z.object({
+      competence: z.date(),
+      arrayTable: z.array(
+        z.object({
+          // cnpj: z.string(),
+          emission: z.string(),
+          productCode: z.string(),
+          productDecription: z.string(),
+          nmcCode: z.string(),
+          cfop: z.string(),
+          icmsBase: z.string(),
+          pisCofinsBase: z.string(),
+        }),
+      ),
+      hash: z.string(),
+      name: z.string(),
+    }),
+  )
+  .handler(
+    async ({
+      input: { competence, arrayTable, hash, name },
+      ctx: { company, user },
+    }) => {
+      if (!user.isAdmin) {
+        throw new Error(`You're not allowed to upload tables`)
+      }
 
-export async function uploadTableAction(data: FormData) {
-  const result = uploadTableSchema.safeParse(Object.fromEntries(data))
+      const tableAlreadyImported = await prisma.importedTable.findUnique({
+        where: {
+          fileHash: hash,
+        },
+      })
 
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-    return { success: false, message: null, errors }
-  }
+      if (tableAlreadyImported) {
+        throw new Error(`This table already imported`)
+      }
 
-  const [company, err1] = await getCompanyAction()
-  const [profile, err2] = await getProfileAction()
+      const competenceAlreadyRegistred = await prisma.product.findFirst({
+        where: {
+          companyId: company.id,
+          competence,
+        },
+      })
 
-  if (err1) {
-    throw new Error(err1.data)
-  }
-  if (err2) {
-    throw new Error(err2.data)
-  }
+      if (competenceAlreadyRegistred) {
+        throw new Error(`This competence already imported`)
+      }
 
-  const { name, competence, file } = result.data
+      try {
+        const { id: importedTableId } = await prisma.importedTable.create({
+          data: {
+            fileName: name,
+            fileHash: hash,
+            competence,
+            companyId: company.id,
+            ownerId: user.id,
+          },
+        })
 
-  const tableWithSameFile = await prisma.tables.findMany({
-    where: {
-      fileJson: file,
-      companyId: company.company.id,
-      competence,
+        const productsToInsert = arrayTable.map((item) => ({
+          emission: new Date(item.emission).toISOString(),
+          productCode: item.productCode,
+          productDecription: item.productDecription,
+          nmcCode: item.nmcCode,
+          cfop: item.cfop,
+          icmsBase: item.icmsBase,
+          pisCofinsBase: item.pisCofinsBase,
+          importedTableId,
+          companyId: company.id,
+          competence,
+        }))
+
+        await prisma.product.createMany({
+          data: productsToInsert,
+        })
+      } catch (error) {
+        console.error(error)
+        throw new Error('Unexpected error, try again in a few minutes.')
+      }
     },
-  })
-
-  if (tableWithSameFile.length > 0) {
-    return {
-      success: false,
-      message: 'Tabela já cadastrada',
-      errors: null,
-    }
-  }
-
-  try {
-    await prisma.tables.create({
-      data: {
-        name,
-        companyId: company.company.id,
-        competence,
-        fileJson: file,
-        ownerId: profile.user.id,
-      },
-    })
-    revalidateTag('tables')
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-    }
-  }
-
-  return {
-    success: true,
-    message: null,
-    errors: null,
-  }
-}
+  )

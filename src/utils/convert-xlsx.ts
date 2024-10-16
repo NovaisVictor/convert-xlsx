@@ -1,52 +1,72 @@
 import * as XLSX from 'xlsx'
 
-export type Sheet3594 = {
-  ALIQ_ICMS: string
-  ALIQ_ICMS_PADRAO: string
-  COD_NCM: string
-  COD_ITEM: string
-  OBS: string
-  FUNDAMENTO: string
+export type Sittax = {
+  // cnpj: string
+  emission: string
+  productCode: string
+  productDecription: string
+  nmcCode: string
+  cfop: string
+  icmsBase: string
+  pisCofinsBase: string
 }
 
-export function convertXlsx(buffer: Buffer): Sheet3594[] {
-  // Lê o arquivo XLSX a partir do Buffer
-  const workbook = XLSX.read(buffer, { type: 'buffer' })
-  const sheetName = '3594' // Nome da aba que você deseja ler
+export async function convertXlsx(fileBuffer: Buffer) {
+  const workbook = XLSX.read(fileBuffer, { type: 'buffer' })
+  const sheetName = workbook.SheetNames[0]
   const worksheet = workbook.Sheets[sheetName]
-
   if (!worksheet) {
     throw new Error(`A aba '${sheetName}' não foi encontrada.`)
   }
 
-  const jsonData: Sheet3594[] = XLSX.utils
-    .sheet_to_json<Sheet3594>(worksheet, {
-      header: 1, // Para obter um array de arrays
-      range: 12, // Começa a leitura após as 12 primeiras linhas
+  const jsonData = XLSX.utils
+    .sheet_to_json(worksheet, {
+      header: 1,
+      range: 0,
     })
-    .slice(1) // Remove o cabeçalho
+    .slice(1)
 
-  // Mapeia os dados para o tipo Sheet3594
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mappedData: Sheet3594[] = jsonData.map((row: any) => ({
-    ALIQ_ICMS: row[8] as string,
-    ALIQ_ICMS_PADRAO: row[9] as string,
-    COD_NCM: row[12] as string,
-    COD_ITEM: row[13] as string,
-    OBS: row[14] as string,
-    FUNDAMENTO: row[15] as string,
-  }))
+  const mappedData: Sittax[] = jsonData.map((row: any) => {
+    const dateValue = row[8]
+    const emissionDate = dateValue ? XLSX.SSF.parse_date_code(dateValue) : null
+    // Cria o objeto mapeado
+    return {
+      // cnpj: (row[0] as string) ?? 'Sem dados',
+      emission: emissionDate
+        ? new Date(emissionDate.y, emissionDate.m - 1, emissionDate.d)
+            .toISOString()
+            .split('T')[0]
+        : 'Sem dados', // Formato YYYY-MM-DD
+      productCode: row[9] ?? 'Sem dados',
+      productDecription: (row[10] as string) ?? 'Sem dados',
+      nmcCode: (row[11] as string) ?? 'Sem dados',
+      cfop: (row[13] as string) ?? 'Sem dados',
+      icmsBase: (row[19] as string) ?? 'Sem dados',
+      pisCofinsBase: (row[24] as string) ?? 'Sem dados',
+    }
+  })
 
-  // Filtra duplicatas
-  const seenItems = new Set<string>()
-  const filterArr: Sheet3594[] = []
-
+  const filterArray: Sittax[] = []
   for (const row of mappedData) {
-    if (!seenItems.has(row.COD_ITEM)) {
-      seenItems.add(row.COD_ITEM)
-      filterArr.push(row)
+    const product = filterArray.find(
+      (filtered) => filtered.productCode === row.productCode,
+    )
+
+    if (!product) {
+      filterArray.push(row)
+    }
+
+    const productIndex = filterArray.findIndex(
+      (filtered) => filtered.productCode === row.productCode,
+    )
+
+    const productEmissionDate = new Date(filterArray[productIndex].emission)
+    const rowEmissionDate = new Date(row.emission)
+
+    if (rowEmissionDate > productEmissionDate) {
+      filterArray[productIndex] = row
     }
   }
-
-  return filterArr
+  return filterArray
 }

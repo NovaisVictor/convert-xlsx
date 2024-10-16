@@ -11,33 +11,56 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String?
-  email        String    @unique
+  email        String   @unique
   passwordHash String
   avatarUrl    String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  isAdmin      Boolean   @default(false)
-  owns_tables  Tables[]
-  member_on    Member[]
-  Company      Company[]
-  Invite       Invite[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isAdmin      Boolean  @default(false)
+
+  member_on     Member[]
+  Company       Company[]
+  Invite        Invite[]
+  ImportedTable ImportedTable[]
 }
 
-model Tables {
+model ImportedTable {
   id         String   @id @default(uuid())
-  name       String
-  competence DateTime @default(now())
-  fileJson   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  fileName   String
+  fileHash   String   @unique
+  competence DateTime
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
 
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
+  createdAt DateTime  @default(now())
+  product   Product[]
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  emission          DateTime
+  productCode       String
+  productDecription String
+  nmcCode           String
+  cfop              String
+  icmsBase          String
+  pisCofinsBase     String
+  competence        DateTime
+
+  importTable     ImportedTable @relation(fields: [importedTableId], references: [id], onDelete: Cascade)
+  importedTableId String
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@unique([companyId, productCode, competence])
+  @@index([companyId, importedTableId, competence])
 }
 
 enum Role {
@@ -75,9 +98,10 @@ model Company {
   owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String?
 
-  members Member[]
-  tables  Tables[]
-  Invite  Invite[]
+  members       Member[]
+  Invite        Invite[]
+  Product       Product[]
+  ImportedTable ImportedTable[]
 }
 
 model Member {
