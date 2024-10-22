@@ -33,7 +33,7 @@ export async function isAdmin() {
   const [data, err] = await getProfileAction()
 
   if (err) {
-    throw new Error(err.message)
+    return console.error(err)
   }
 
   return data.user.isAdmin

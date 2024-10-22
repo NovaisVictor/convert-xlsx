@@ -5,7 +5,11 @@ import {
 } from 'zsa-react-query'
 
 export const QueryKeyFactory = createServerActionsKeyFactory({
-  getCompanyTablesAction: () => ['tables'],
+  getCompanyTablesAction: (competence: Date, currentCo: string) => [
+    'tables',
+    competence.toISOString(),
+    currentCo,
+  ],
   getProductsAction: () => ['products'],
   getCompaniesAction: () => ['clients-table'],
   getPendingInvitesAction: () => ['pending-invites'],

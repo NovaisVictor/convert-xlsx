@@ -37,8 +37,6 @@ export const getCompanyTablesAction = membershipProcedure
         membership: { companyId },
       },
     }) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
       const year = competence.getFullYear()
       const month = competence.getMonth() // getMonth() retorna 0-11
 

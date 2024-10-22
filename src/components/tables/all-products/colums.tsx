@@ -41,27 +41,27 @@ export const columns: ColumnDef<Products>[] = [
   },
   {
     accessorKey: 'nmcCode',
-    header: 'ALIQ_ICMS',
+    header: 'COD NCM',
   },
   {
     accessorKey: 'cfop',
-    header: 'ALIQ_ICMS_PADRAO',
+    header: 'CFOP',
   },
   {
     accessorKey: 'icmsBase',
-    header: 'COD_NCM',
+    header: 'ICMS BASE',
   },
   {
     accessorKey: 'pisCofinsBase',
-    header: 'FUNDAMENTO',
+    header: 'PIS COFINS BASE',
   },
   {
     accessorKey: 'productDecription',
-    header: 'OBS',
+    header: 'DESCRIÇÃO DO PRODUTO',
   },
   {
     accessorKey: 'emission',
-    header: 'EMISSION',
+    header: 'DATA DE EMISSÃO',
   },
   {
     id: 'actions',

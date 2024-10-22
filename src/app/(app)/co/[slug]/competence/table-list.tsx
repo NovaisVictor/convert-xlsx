@@ -28,9 +28,10 @@ export function TableList() {
   }>()
 
   const { competence } = useCompetence()
+
   const { isLoading, data } = useServerActionQuery(getCompanyTablesAction, {
     input: { competence },
-    queryKey: [`tables`],
+    queryKey: [`tables`, competence.toISOString(), currentCo],
   })
 
   return (

@@ -29,6 +29,7 @@ export const authProcedure = createServerActionProcedure().handler(async () => {
     }
     return { user }
   } catch (error) {
+    console.error(error)
     throw new Error('Authentication failed')
   }
 })
